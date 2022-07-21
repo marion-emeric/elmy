@@ -1,0 +1,17 @@
+{
+    "name": "test/elmy",
+    "authors": [
+        {
+            "name": "Marion Emeric Bourgogne",
+            "email": "marion.emeric@gmail.com"
+        }
+    ],
+    "autoload": {
+        "psr-4": {
+            "App\\": "src/"
+        }
+    },
+    "require": {
+        "ext-curl": "*"
+    }
+}
