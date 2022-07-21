@@ -3,6 +3,7 @@
 namespace App\Controller;
 
 use App\Service\CsvService;
+use App\Service\StandardizePowerhouseService;
 
 class PowerhouseController
 {
@@ -24,7 +25,7 @@ class PowerhouseController
         ],
     ];
 
-    function index()
+    function index(): string
     {
         return 'Hello Elmy!';
     }
@@ -32,17 +33,22 @@ class PowerhouseController
     /**
      * @param string $from
      * @param string $to
-     * @return string
+     * @return array
      */
-    function getPowerHouse(string $from, string $to): string
+    function getPowerHouse(string $from, string $to): array
     {
         $fromDate = preg_replace("/from=/", "", $from);
         $toDate = preg_replace("/to=/", "", $to);
 
-        $datas = $this->getAgregateDataFromPowerhouse(self::POWERHOUSES, $fromDate, $toDate);
-        var_dump($datas);
+        // Get all data from Elmy API
+        $data = $this->getAgregateDataFromPowerhouse(self::POWERHOUSES, $fromDate, $toDate);
+
+        // TODO
+//        $powerHouseService = new StandardizePowerhouseService();
+//        $powerHouseService->aggregateDataByDate($data, self::POWERHOUSES, strtotime($fromDate), strtotime($toDate));
+
+        var_dump($data);
         die();
-        return $datas;
     }
 
     /**
