@@ -7,7 +7,7 @@ use App\Service\StandardizePowerhouseService;
 
 class PowerhouseController
 {
-    const POWERHOUSES = [
+    public const POWERHOUSES = [
         [
             'name' => 'Hawes',
             'step' => 15,
@@ -42,11 +42,11 @@ class PowerhouseController
         $toDate = preg_replace('/to=/', '', $to);
 
         // Get all data from Elmy API
-        $data = $this->getAgregateDataFromPowerhouse(self::POWERHOUSES, $fromDate, $toDate);
+        $data = $this->getAgregateDataFromPowerhouse($fromDate, $toDate);
 
         // remove 1 hour otherwise date = $from + 1h when converted to timestamp
-        $fromDateTimestamp = strtotime('-1 hours',strtotime($fromDate));
-        $toDateTimestamp = strtotime('-1 hours',strtotime($fromDate));
+        $fromDateTimestamp = strtotime('-1 hours', strtotime($fromDate));
+        $toDateTimestamp = strtotime('-1 hours', strtotime($fromDate));
 
         $powerHouseService = new StandardizePowerhouseService();
         $result = $powerHouseService->aggregateDataByDate($data, self::POWERHOUSES, $fromDateTimestamp, $toDateTimestamp);
@@ -55,16 +55,15 @@ class PowerhouseController
     }
 
     /**
-     * @param array $powerhouses
      * @param string $from
      * @param string $to
      * @return array
      * @throws \JsonException
      */
-    private function getAgregateDataFromPowerhouse(array $powerhouses, string $from, string $to): array
+    private function getAgregateDataFromPowerhouse(string $from, string $to): array
     {
         $data = [];
-        foreach ($powerhouses as $powerhouse) {
+        foreach (self::POWERHOUSES as $powerhouse) {
             $data[$powerhouse['name']] = $this->callElmyAPI($powerhouse, $from, $to);
         }
         return $data;
