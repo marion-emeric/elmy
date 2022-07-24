@@ -7,7 +7,7 @@ class StandardizePowerhouseService
     /**
      * @throws \JsonException
      */
-    public function aggregateDataByDate(array $data, array $powerhouses, int $fromDate, int $toDate): array
+    public function aggregateDataByDate(array $data, array $powerhouses, int $fromDate): array
     {
         // Harmonize field names
         $data = $this->replaceArrayKeys($data);

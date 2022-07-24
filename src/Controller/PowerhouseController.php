@@ -46,10 +46,9 @@ class PowerhouseController
 
         // remove 1 hour otherwise date = $from + 1h when converted to timestamp
         $fromDateTimestamp = strtotime('-1 hours', strtotime($fromDate));
-        $toDateTimestamp = strtotime('-1 hours', strtotime($fromDate));
 
         $powerHouseService = new StandardizePowerhouseService();
-        $result = $powerHouseService->aggregateDataByDate($data, self::POWERHOUSES, $fromDateTimestamp, $toDateTimestamp);
+        $result = $powerHouseService->aggregateDataByDate($data, self::POWERHOUSES, $fromDateTimestamp);
 
         return json_encode($result, JSON_THROW_ON_ERROR);
     }
