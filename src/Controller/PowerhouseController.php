@@ -10,17 +10,17 @@ class PowerhouseController
     const POWERHOUSES = [
         [
             'name' => 'Hawes',
-            'step' => '15',
+            'step' => 15,
             'format' => 'json'
         ],
         [
             'name' => 'Barnsley',
-            'step' => '30',
+            'step' => 30,
             'format' => 'json'
         ],
         [
             'name' => 'Hounslow',
-            'step' => '60',
+            'step' => 60,
             'format' => 'csv'
         ],
     ];
@@ -33,22 +33,25 @@ class PowerhouseController
     /**
      * @param string $from
      * @param string $to
-     * @return array
+     * @return string|false
+     * @throws \JsonException
      */
-    function getPowerHouse(string $from, string $to): array
+    function getPowerHouse(string $from, string $to): bool|string
     {
-        $fromDate = preg_replace("/from=/", "", $from);
-        $toDate = preg_replace("/to=/", "", $to);
+        $fromDate = preg_replace('/from=/', '', $from);
+        $toDate = preg_replace('/to=/', '', $to);
 
         // Get all data from Elmy API
         $data = $this->getAgregateDataFromPowerhouse(self::POWERHOUSES, $fromDate, $toDate);
 
-        // TODO
-//        $powerHouseService = new StandardizePowerhouseService();
-//        $powerHouseService->aggregateDataByDate($data, self::POWERHOUSES, strtotime($fromDate), strtotime($toDate));
+        // remove 1 hour otherwise date = $from + 1h when converted to timestamp
+        $fromDateTimestamp = strtotime('-1 hours',strtotime($fromDate));
+        $toDateTimestamp = strtotime('-1 hours',strtotime($fromDate));
 
-        var_dump($data);
-        die();
+        $powerHouseService = new StandardizePowerhouseService();
+        $result = $powerHouseService->aggregateDataByDate($data, self::POWERHOUSES, $fromDateTimestamp, $toDateTimestamp);
+
+        return json_encode($result, JSON_THROW_ON_ERROR);
     }
 
     /**
@@ -56,6 +59,7 @@ class PowerhouseController
      * @param string $from
      * @param string $to
      * @return array
+     * @throws \JsonException
      */
     private function getAgregateDataFromPowerhouse(array $powerhouses, string $from, string $to): array
     {
@@ -71,6 +75,7 @@ class PowerhouseController
      * @param string $from
      * @param string $to
      * @return bool|string|void
+     * @throws \JsonException
      */
     private function callElmyAPI(array $powerhouse, string $from, string $to)
     {
@@ -97,7 +102,7 @@ class PowerhouseController
         }
 
         if ($powerhouse['format'] === 'json') {
-            return json_decode($data, true);
+            return json_decode($data, true, 512, JSON_THROW_ON_ERROR);
         }
 
         return $this->transformCsvToArray(strtolower($powerhouse['name']), $data);
