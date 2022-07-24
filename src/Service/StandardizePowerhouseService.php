@@ -46,27 +46,18 @@ class StandardizePowerhouseService
             $indexOfKey = array_search($key, array_column($powerhouses, 'name'), true);
             $divider = $powerhouses[$indexOfKey]['step'] / 15;
 
-            $i = 0;
             foreach ($powerhouseArray as $item) {
-                $endDate = strtotime('+15 minutes', $startDate);
-                while ($item->start > $startDate) {
+                $i = 0;
+                while ($i < $divider) {
+                    $endDate = strtotime('+15 minutes', $startDate);
                     $result[$key][] = [
                         'start' => $startDate,
                         'end' => $endDate,
-                        'power' => $result[$key][$i - 1]['power'],
+                        'power' => $item->power / $divider,
                     ];
                     $startDate = strtotime('+15 minutes', $startDate);
-                    $endDate = strtotime('+15 minutes', $startDate);
                     $i++;
                 }
-
-                $result[$key][] = [
-                    'start' => $startDate,
-                    'end' => $endDate,
-                    'power' => $item->power / $divider,
-                ];
-                $startDate = strtotime('+15 minutes', $startDate);
-                $i++;
             }
         }
         return $result;
@@ -85,7 +76,6 @@ class StandardizePowerhouseService
                 $result[$key] = $item;
             }
         }
-
         return $result;
     }
 }
